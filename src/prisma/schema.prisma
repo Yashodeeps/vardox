@@ -1,0 +1,32 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model user {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  identifier  String  @unique
+  profile   String?
+  name      String?
+  password  String?
+  accountType accountType?
+  walletAddress String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+enum accountType {
+  ISSUER
+  USER
+  VERIFIER
+}
