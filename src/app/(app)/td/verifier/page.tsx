@@ -1,8 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { PartyPopper } from "lucide-react";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
+import { CheckCircle2, PartyPopper, XCircle } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -16,6 +22,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { CONTRACT_ADDRESS } from "@/lib/utils";
+import { Address } from "viem";
+import { aib } from "@/lib/aib";
+import { sepolia } from "viem/chains";
 
 const Page = () => {
   const { connectors, connect } = useConnect();
@@ -33,6 +43,13 @@ const Page = () => {
     file: false,
   });
   const [verificationResult, setVerificationResult] = useState("");
+  const { data: isDocumentValid, refetch } = useReadContract({
+    address: CONTRACT_ADDRESS as Address,
+    abi: aib,
+    functionName: "verifyDocument",
+    args: [formData.vardoxId, formData.docHash],
+    chainId: sepolia.id,
+  });
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -88,15 +105,10 @@ const Page = () => {
     }
 
     try {
-      setVerificationResult("Verifying...");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-   
-      setVerificationResult("✅ Certificate verified successfully!");
-      setError("");
-    } catch (err) {
-      setError("Verification failed. Please try again.");
-      setVerificationResult("");
+      refetch();
+    } catch (error) {
+      console.error("Contract interaction error:", error);
+      setError("Failed to issue document. Please try again.");
     }
   };
 
@@ -111,7 +123,9 @@ const Page = () => {
           <Dialog>
             <DialogTrigger asChild>
               {isConnected ? (
-                <Button variant={"secondary"}>{address}</Button>
+                <div className="w-full bg-neutral-800 rounded-lg p-2 break-all text-wrap">
+                  {address}
+                </div>
               ) : (
                 <Button>Connect your wallet</Button>
               )}
@@ -188,10 +202,16 @@ const Page = () => {
               <PartyPopper />
             </Button>
             {error && <p className="text-red-500 text-sm">{error}</p>}
-            {verificationResult && (
-              <p className="text-green-500 text-sm font-medium">
-                {verificationResult}
-              </p>
+            {isDocumentValid ? (
+              <>
+                <CheckCircle2 className="h-5 w-5" />
+                <span>Document is valid and verified on blockchain</span>
+              </>
+            ) : (
+              <>
+                <XCircle className="h-5 w-5" />
+                <span>Document is not verified or does not exist</span>
+              </>
             )}
           </div>
         </form>
