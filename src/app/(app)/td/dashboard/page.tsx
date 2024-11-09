@@ -41,8 +41,17 @@ const Page = () => {
     fetchUserData();
   }, []);
   return (
-    <div className="flex h-screen justify-center  items-center">
-      <div>Id: {userData?.identifier}</div>
+    <div className="flex h-screen  w-full items-center justify-center">
+      <div className="h-1/2 bg-gray-800 flex  flex-col gap-4 w-1/2 md:w-1/4 p-4 rounded-2xl shadow-xl">
+        <div className="text-lg text-purple-500 font-semibold">
+          ID: {userData?.identifier}
+        </div>
+        <div className="text-gray-300">Your Documents</div>
+
+        <div className="flex h-full justify-center font-semibold items-center text-lg text-gray-400">
+          <div>!!!No issued documents</div>
+        </div>
+      </div>
     </div>
   );
 };
