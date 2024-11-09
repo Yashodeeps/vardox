@@ -21,7 +21,14 @@ const Navbar = () => {
           >
             Issue a doc
           </Button>
-          <Button variant={"outline"}>Verify a doc</Button>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              router.push("/td/verifier");
+            }}
+          >
+            Verify a doc
+          </Button>
         </div>
         {session.data?.user ? (
           <Button

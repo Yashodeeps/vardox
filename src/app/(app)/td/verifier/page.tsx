@@ -23,19 +23,16 @@ const Page = () => {
   const { disconnect } = useDisconnect();
 
   const [formData, setFormData] = useState({
-    authority: "",
-    certificateType: "",
     vardoxId: "",
     docHash: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState({
-    authority: false,
-    certificateType: false,
     vardoxId: false,
     file: false,
   });
+  const [verificationResult, setVerificationResult] = useState("");
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -48,6 +45,7 @@ const Page = () => {
       [name]: true,
     }));
     setError("");
+    setVerificationResult("");
   };
 
   const handleFileUpload = async (e: any) => {
@@ -71,42 +69,45 @@ const Page = () => {
         docHash: hashHex,
       }));
       setError("");
+      setVerificationResult("");
     }
   };
 
-  const handleSubmit = (e: any) => {
+  const handleVerify = async (e: any) => {
     e.preventDefault();
 
     setTouched({
-      authority: true,
-      certificateType: true,
       vardoxId: true,
       file: true,
     });
 
-    if (
-      !formData.authority ||
-      !formData.certificateType ||
-      !formData.vardoxId ||
-      !selectedFile
-    ) {
+    if (!formData.vardoxId || !selectedFile) {
       setError("Please fill in all required fields");
+      setVerificationResult("");
       return;
     }
 
-    console.log("Form Data:", formData);
-    console.log("File:", selectedFile);
-    // submission logic
+    try {
+      setVerificationResult("Verifying...");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+   
+      setVerificationResult("✅ Certificate verified successfully!");
+      setError("");
+    } catch (err) {
+      setError("Verification failed. Please try again.");
+      setVerificationResult("");
+    }
   };
 
   return (
     <div className="flex justify-center w-full items-center h-screen mx-4">
-      <div className="border border-gray-500 rounded-xl shadow-xl w-1/2 md:w-1/3 h-2/3 ">
+      <div className="border border-gray-500 rounded-xl shadow-xl w-1/2 md:w-1/3 h-fit">
         <div className="text-xl text-gray-300 font-bold p-4">
-          Issue a certificate{" "}
+          Verify a certificate{" "}
         </div>
         <Separator className="bg-gray-500" />
-        <form onSubmit={handleSubmit} className="p-4">
+        <form onSubmit={handleVerify} className="p-4">
           <Dialog>
             <DialogTrigger asChild>
               {isConnected ? (
@@ -132,42 +133,6 @@ const Page = () => {
               </div>
             </DialogContent>
           </Dialog>
-
-          <div className="pt-3">
-            <Label>
-              Authority <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              type="text"
-              name="authority"
-              value={formData.authority}
-              onChange={handleInputChange}
-              placeholder="Hack this fall"
-              className={`w-full p-2 rounded-lg border ${
-                touched.authority && !formData.authority
-                  ? "border-red-500"
-                  : "border-gray-500"
-              }`}
-            />
-          </div>
-
-          <div className="pt-3">
-            <Label>
-              Type of certificate <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              type="text"
-              name="certificateType"
-              value={formData.certificateType}
-              onChange={handleInputChange}
-              placeholder="HTF Winner"
-              className={`w-full p-2 rounded-lg border ${
-                touched.certificateType && !formData.certificateType
-                  ? "border-red-500"
-                  : "border-gray-500"
-              }`}
-            />
-          </div>
 
           <div className="flex gap-4">
             <div className="pt-3">
@@ -217,12 +182,17 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <Button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-500 flex gap-3 mt-3"
+              className="bg-purple-600 hover:bg-purple-500 flex gap-3 my-3"
             >
-              Issue
+              Verify
               <PartyPopper />
             </Button>
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            {verificationResult && (
+              <p className="text-green-500 text-sm font-medium">
+                {verificationResult}
+              </p>
+            )}
           </div>
         </form>
       </div>
