@@ -66,5 +66,9 @@ export const authConfig: NextAuthOptions = {
     async session({ session }) {
       return session;
     },
+
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
   },
 };
