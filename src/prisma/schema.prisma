@@ -19,6 +19,19 @@ model user {
   password  String?
   accountType accountType?
   walletAddress String?
+  documents String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model document {
+  id        String   @id @default(cuid())
+  name      String
+  transactionHash      String
+  type      String
+  authority String
+  issuerAddress   String
+  ownerId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
