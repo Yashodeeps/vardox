@@ -12,15 +12,17 @@ export async function GET() {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        id: true,
-        identifier: true,
-        accountType: true,
-        walletAddress: true,
-      },
-    });
+    const user = session.user
+      ? await prisma.user.findUnique({
+          where: { email: session.user.email ?? undefined },
+          select: {
+            id: true,
+            identifier: true,
+            accountType: true,
+            walletAddress: true,
+          },
+        })
+      : null;
 
     return NextResponse.json({ user }, { status: 200 });
   } catch (error) {

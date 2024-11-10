@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useAccount, useConnect, useDisconnect, useReadContract } from "wagmi";
+import { useAccount, useConnect, useReadContract } from "wagmi";
 import {
   AlertCircle,
   CheckCircle2,

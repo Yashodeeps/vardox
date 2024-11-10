@@ -1,9 +1,10 @@
 import { dbconnect } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 import { customAlphabet } from "nanoid";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-export const authConfig = {
+export const authConfig: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: `${process.env.GOOGLE_CLIENT_ID}`,
@@ -11,15 +12,7 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async signIn({
-      user,
-      account,
-      profile,
-    }: {
-      user: any;
-      account: any;
-      profile: any;
-    }) {
+    async signIn({ user, account, profile }) {
       const prisma = await dbconnect();
       if (account?.provider === "google") {
         const email = user.email;
@@ -29,7 +22,7 @@ export const authConfig = {
         }
         const existingUser = await prisma.user.findFirst({
           where: {
-            email: profile?.email,
+            email: profile?.email || "",
           },
         });
         if (existingUser) {
@@ -47,9 +40,9 @@ export const authConfig = {
 
         const newUser = await prisma.user.create({
           data: {
-            email: profile?.email,
+            email: profile?.email || "",
             name: profile?.name,
-            profile: profile?.picture,
+            profile: profile?.image,
             identifier: customId,
             password: randomUUID(),
           },
@@ -63,19 +56,14 @@ export const authConfig = {
       return false;
     },
 
-    async jwt({ token, user }: any) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id.toString();
       }
       return token;
     },
 
-    async session({ session, token }: any) {
-      if (token) {
-        if (session.user) {
-          session.user.id = token.id;
-        }
-      }
+    async session({ session }) {
       return session;
     },
   },

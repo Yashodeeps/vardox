@@ -156,7 +156,7 @@ const Page = () => {
     console.log("File:", selectedFile);
 
     try {
-      const contractResult = writeContract({
+      writeContract({
         address: CONTRACT_ADDRESS as Address,
         abi: aib,
         functionName: "issueDocument",
