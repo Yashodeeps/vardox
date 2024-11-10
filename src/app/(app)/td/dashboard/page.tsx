@@ -29,7 +29,15 @@ const Page = () => {
   const { toast } = useToast();
   const [userData, setUserData] = useState<UserData | null>(null);
   const dispatch = useDispatch();
-  const [documents, setDocuments] = useState([]);
+  interface Document {
+    name: string;
+    authority: string;
+    transactionHash: string;
+    type: string;
+    issuerAddress: string;
+  }
+
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function getUserDocuments(identifier: string) {
@@ -116,7 +124,7 @@ const Page = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {documents && documents.length > 0 ? (
-              documents.map((doc: any, index: number) => (
+              documents.map((doc, index: number) => (
                 <Card
                   key={index}
                   className="group bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-800/50 transition-all duration-300 shadow-lg hover:shadow-indigo-500/10"
@@ -221,7 +229,7 @@ const Page = () => {
                     No Documents Found
                   </h3>
                   <p className="text-gray-400">
-                    You don't have any issued documents yet.
+                    You dont have any issued documents yet.
                   </p>
                 </CardContent>
               </Card>

@@ -1,18 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useReadContract,
-  useWriteContract,
-} from "wagmi";
+import { useAccount, useConnect, useDisconnect, useReadContract } from "wagmi";
 import {
   AlertCircle,
   CheckCircle2,
   FileSearch,
-  PartyPopper,
   Shield,
   Upload,
   Wallet,
@@ -20,10 +13,7 @@ import {
 } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -40,14 +30,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Page = () => {
   const { connectors, connect } = useConnect();
   const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const [isValid, setIsValid] = useState<Boolean | null>(null);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const [formData, setFormData] = useState({
     vardoxId: "",
     docHash: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState({
     vardoxId: false,
@@ -62,7 +51,7 @@ const Page = () => {
     chainId: sepolia.id,
   });
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -76,9 +65,10 @@ const Page = () => {
     setVerificationResult("");
   };
 
-  const handleFileUpload = async (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       setSelectedFile(file);
       setTouched((prev) => ({
         ...prev,
@@ -101,7 +91,7 @@ const Page = () => {
     }
   };
 
-  const handleVerify = async (e: any) => {
+  const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setTouched({

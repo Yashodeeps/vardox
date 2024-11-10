@@ -2,7 +2,6 @@ import { dbconnect } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 import { customAlphabet } from "nanoid";
 import GoogleProvider from "next-auth/providers/google";
-import { NextResponse } from "next/server";
 
 export const authConfig = {
   providers: [
@@ -12,7 +11,15 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }: any) {
+    async signIn({
+      user,
+      account,
+      profile,
+    }: {
+      user: any;
+      account: any;
+      profile: any;
+    }) {
       const prisma = await dbconnect();
       if (account?.provider === "google") {
         const email = user.email;

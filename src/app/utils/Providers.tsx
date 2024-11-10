@@ -10,8 +10,8 @@ import { Provider } from "react-redux";
 import { WagmiProvider } from "wagmi";
 
 import { http, createConfig } from "wagmi";
-import { base, mainnet, optimism, sepolia } from "wagmi/chains";
-import { injected, metaMask, safe, walletConnect } from "wagmi/connectors";
+import { base, sepolia } from "wagmi/chains";
+import { injected, metaMask } from "wagmi/connectors";
 
 export const config = createConfig({
   chains: [sepolia, base],

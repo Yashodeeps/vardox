@@ -4,23 +4,13 @@ import { Separator } from "@/components/ui/separator";
 import {
   useAccount,
   useConnect,
-  useDisconnect,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import {
-  FileCheck,
-  Paperclip,
-  PartyPopper,
-  Upload,
-  Wallet,
-} from "lucide-react";
+import { FileCheck, Paperclip, Upload, Wallet } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,15 +28,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Page = () => {
   const { connectors, connect } = useConnect();
   const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
 
   const {
     data: hash,
     writeContract,
-    isError,
     isSuccess,
     isPending,
-    isPaused,
   } = useWriteContract();
 
   const [formData, setFormData] = useState({
@@ -56,7 +43,7 @@ const Page = () => {
     vardoxId: "",
     docHash: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [isStored, setIsStored] = useState(false);
   const [touched, setTouched] = useState({
@@ -72,7 +59,7 @@ const Page = () => {
       hash,
     });
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -85,8 +72,13 @@ const Page = () => {
     setError("");
   };
 
-  const handleFileUpload = async (e: any) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) {
+      setError("No file selected");
+      return;
+    }
+    const file = files[0];
     if (file) {
       setSelectedFile(file);
       setTouched((prev) => ({
@@ -133,7 +125,7 @@ const Page = () => {
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setTouched({

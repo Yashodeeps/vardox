@@ -1,6 +1,5 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import path from "path";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
   Accordion,

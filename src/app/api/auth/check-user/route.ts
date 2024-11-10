@@ -1,9 +1,9 @@
-import { getServerSession, User } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 import { authConfig } from "../[...nextauth]/authConfig";
 import { dbconnect } from "@/lib/prisma";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   const prisma = await dbconnect();
   const session = await getServerSession(authConfig);
 

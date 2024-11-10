@@ -1,9 +1,9 @@
-import { getServerSession, User } from "next-auth";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { dbconnect } from "@/lib/prisma";
 import { authConfig } from "../auth/[...nextauth]/authConfig";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   const prisma = await dbconnect();
   const session = await getServerSession(authConfig);
 
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   const prisma = await dbconnect();
   const session = await getServerSession(authConfig);
   if (!session) {
