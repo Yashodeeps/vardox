@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CONTRACT_ADDRESS } from "@/lib/utils";
 import { aib } from "@/lib/aib";
 import { Address } from "viem";
@@ -45,6 +45,8 @@ const Page = () => {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const [isStored, setIsStored] = useState(false);
   const [touched, setTouched] = useState({
     authority: false,
@@ -185,6 +187,12 @@ const Page = () => {
     }
   };
 
+  useEffect(() => {
+    if (isConnected) {
+      setIsDialogOpen(false);
+    }
+  }, [isConnected]);
+
   return (
     <div className="min-h-screen bg-black/40 p-8 flex items-center justify-center w-screen">
       <div className="w-fit max-w-4xl flex gap-8">
@@ -200,7 +208,7 @@ const Page = () => {
           <Separator className="bg-gray-800" />
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <Dialog>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
                     variant={"secondary"}
@@ -229,7 +237,7 @@ const Page = () => {
                         variant="outline"
                         key={connector.uid}
                         onClick={() => connect({ connector })}
-                        className="hover:bg-purple-500/20 transition-colors"
+                        className="hover:bg-purple-500/20 hover:text-gray-300 transition-colors"
                       >
                         {connector.name}
                       </Button>
@@ -239,7 +247,7 @@ const Page = () => {
               </Dialog>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+                <div className="space-y-2 text-white">
                   <Label className="text-gray-300">
                     Authority <span className="text-red-400">*</span>
                   </Label>
@@ -257,7 +265,7 @@ const Page = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 text-white">
                   <Label className="text-gray-300">
                     Certificate Name <span className="text-red-400">*</span>
                   </Label>
@@ -314,7 +322,7 @@ const Page = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+                <div className="space-y-2 text-white">
                   <Label className="text-gray-300">
                     Upload Document <span className="text-red-400">*</span>
                   </Label>
@@ -329,7 +337,7 @@ const Page = () => {
                     <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 ">
                   <Label className="text-gray-300">Document Hash</Label>
                   <Input
                     type="text"
